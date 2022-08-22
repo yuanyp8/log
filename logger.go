@@ -5,12 +5,14 @@ import (
 	"go.uber.org/zap/zapcore"
 	"io"
 	"os"
+	"sync"
 	"time"
 )
 
 var (
 	std       *Logger = NewDefaultLogger()
 	teeLogger *Logger = NewLoggerTeeWithRotate(defaultTops)
+	once              = sync.Once{}
 )
 
 type LevelEnablerFunc func(lvl Level) bool
@@ -24,11 +26,14 @@ func (l *Logger) Sync() error {
 	return l.l.Sync()
 }
 
-func Sync() error {
+func Sync() (err error) {
 	if std != nil {
-		return std.Sync()
+		once.Do(func() {
+			err = std.Sync()
+		})
+		return
 	}
-	return nil
+	return
 }
 
 // NewDefaultLogger 对zap的封装, 将创建 `Logger` 的过程封装到 `New` 内部
