@@ -1,6 +1,9 @@
 package log
 
-import "go.uber.org/zap"
+import (
+	"errors"
+	"go.uber.org/zap"
+)
 
 // function variables for all field types
 // in github.com/uber-go/zap/field.go
@@ -62,4 +65,17 @@ var (
 	Panic  = std.Panic
 	Fatal  = std.Fatal
 	Debug  = std.Debug
+
+	// ErrLogPathNotSet is an error that indicates the log path is not set.
+	ErrLogPathNotSet = errors.New("log path must be set")
+)
+
+type (
+	Mode string
+)
+
+const (
+	ConsoleMode Mode   = "console"
+	JsonMode    Mode   = "json"
+	timeFormat  string = "2006-01-02T15:04:05.000Z0700"
 )
